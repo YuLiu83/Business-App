@@ -1,0 +1,8 @@
+pandas
+tensorflow
+Flask
+wtforms
+transformers
+bert-for-tf2
+gensim
+nltk

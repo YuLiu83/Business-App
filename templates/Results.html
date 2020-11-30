@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Analytic Home Page</title>
+{% endblock %}
+
+{% block body %}
+<br><br><br><br><br>
+
+<h3>The Email Message:</h3>
+<div>{{content}}</div>
+<br><br>
+<h3>Analysis Result:</h3>
+<div>This Email message is <strong>{{ prediction }}</strong>
+	 (probability: {{ probability }}%).</div>
+
+<br>
+<div id='button'>
+	  <form action="/Spam_detect">
+	    <input type=submit value='Submit another review'>
+	  </form>
+</div>
+
+
+
+{% endblock %}

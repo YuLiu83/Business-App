@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Analytic Home Page</title>
+{% endblock %}
+
+{% block body %}
+<br><br><br><br><br>
+
+<h3>Document summary based on top {{rate}}% most relevent sententces from the submitted document:</h3>
+<div><strong>{{ summary }}</strong></div>
+<br> <br>
+
+<h3>Extracted top {{count}} key phrases from the submitted document:</h3>
+<div><strong>{{ keyword }}</strong></div>
+
+<br>
+<div id='button'>
+	  <form action="/Document Summary">
+	    <input type=submit value='Summarize Another Document'>
+	  </form>
+</div>
+
+  
+{% endblock %}

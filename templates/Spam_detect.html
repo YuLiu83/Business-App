@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Analytic Home Page</title>
+{% endblock %}
+
+{% block body %}
+
+<br><br><br><br><br><br>
+
+<div class="form"></div>  
+    <h2 style="text-align: center">Spam Message Detection</h2>
+    <form action="/Spam_detect/Results" method="POST"> 
+        <!-- <label for="exampleFormControlTextarea1">Text area:</label> -->
+        <textarea class="form-control" name="content" id="exampleFormControlTextarea1" placeholder="Please enter the message you wish to verify here. " rows="6" aria-label="SXXh"></textarea>
+        <br>
+        <input type="submit" value="Click for Expert Opinion">  
+
+    </form>
+
+</div>
+  
+{% endblock %}
