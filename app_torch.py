@@ -52,6 +52,7 @@ else:
     ssl._create_default_https_context = _create_unverified_https_context
 nltk.download('wordnet')
 nltk.download('punkt')
+nltk.download('stopwords')
 
 def document_process(text):
     pattern = r'\s|\ufeff'
@@ -65,6 +66,32 @@ def document_process(text):
     
     return remove, Lemmatized
 
+
+# Preparing Document Similarity Comparision
+import pandas as pd
+from nltk.corpus import stopwords
+from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer 
+from sklearn.metrics.pairwise import cosine_similarity
+sbert_model = SentenceTransformer('distilbert-base-nli-stsb-mean-tokens')
+def document_prep(doc1, doc2):
+    documents_df=pd.DataFrame([doc1, doc2], columns=['documents'])
+    stop_words_l=stopwords.words('english')
+    doc_list=documents_df.documents.apply(lambda x: " ".join(re.sub(r'[^a-zA-Z]',' ',w).lower() for w in x.split() if re.sub(r'[^a-zA-Z]',' ',w).lower() not in stop_words_l) )
+    return doc_list
+
+def sentiment_similarity(doc_list):
+    
+    document_embeddings = sbert_model.encode(doc_list)
+    sentiment_similarities=cosine_similarity(document_embeddings)[0][1]
+    return sentiment_similarities
+
+
+def word_choice_similarity(doc_list):
+    tfidfvectoriser=TfidfVectorizer()
+    tfidf_vectors=tfidfvectoriser.fit_transform(doc_list)
+    words_similarities=cosine_similarity(tfidf_vectors)[0][1]
+    return words_similarities
 
 
 
@@ -112,9 +139,19 @@ def Summary_result():
         count=request.form['count']
         if len(message)>0:
             remove, lemmatized=document_process(message)
-            if rate!='' and 0<float(rate)<=1:
-                summary=summarize(remove, ratio=float(rate))
-                rate=int(float(rate)*100)
+            if rate!='' and 0<float(rate)<=100:
+                try:
+                    summary=summarize(remove, ratio=float(rate)/100)
+                    rate=int(float(rate))
+                    if len(summary)==0:
+                        summary='Unable to generate proper summary based on inputs. \
+                        This may due to the fact that the \
+                        document being entered for summary is too short \
+                        or the value for % of original sentences used for summary was set too low.'
+                
+                except ValueError:
+                    summary='Input must have more than one sentence.'
+
             else:
                 summary='Not Requested'
             if count!='':
@@ -129,6 +166,36 @@ def Summary_result():
                         count=count)
         return render_template('Summary_main.html')
 
+
+@ app.route('/Document Compare', methods=['POST', 'GET'])
+def Compare():
+    return render_template('Compare_main.html')
+
+@ app.route('/Document Compare/Compare_result', methods=['POST', 'GET'])
+def Compare_result():
+    if request.method=='POST':
+        doc1=request.form['content1']
+        doc2=request.form['content2']
+        if len(doc1)>0 and len(doc2)>0:
+            doc_list=document_prep(doc1, doc2)
+            sentiment_similarities=sentiment_similarity(doc_list)*100
+            words_similarities=word_choice_similarity(doc_list)*100
+            Feedback="The two entered documents have {}% similarity in terms of 'Content' and {}% similarity \
+            in their 'Word Choice'. " \
+            .format( round(sentiment_similarities), round(words_similarities))
+        elif doc1==' ' and doc2==' ':
+            Feedback='The entered documents only contain stop words excluded from analysis'
+        else:
+            Feedback='Please enter both documents for comparing similarities.'
+
+        return render_template('Compare_result.html', Feedback=Feedback)
+    return render_template('Compare_main.html')
+
+
+@ app.route('/stop_words', methods=['POST', 'GET'])
+def Stopwords():
+    Stopwords=tuple(stopwords.words('english'))
+    return render_template('Nltk_Stopwords.html', stopwords=Stopwords)
 
 
 if __name__ == "__main__":
