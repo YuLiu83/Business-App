@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Analytic Home Page</title>
+{% endblock %}
+
+{% block body %}
+<br><br><br><br><br>
+
+<h3>{{Feedback}}</h3>
+<br>
+<div>Note: For the full list of <a href="https://en.wikipedia.org/wiki/Stop_word">'Stop Words'</a> removed from analysis, please check <a href="/stop_words">here</a>.</div>
+<br><br>
+<!-- <div><strong>{{Feedback}}</strong></div> -->
+
+<div id='button'>
+	  <form action="/Document Compare/Compare_result">
+	    <input type=submit value='Make Another Comparison'>
+	  </form>
+</div>
+
+
+  
+{% endblock %}

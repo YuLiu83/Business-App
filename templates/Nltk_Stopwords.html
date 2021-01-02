@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block body %}
+<br><br><br><br>
+
+<h3>Followings are stop words our app excluded before conducting the similarity anlaysis: </h3>
+<br>
+<div>{{stopwords}}</div>
+
+<br>
+<div id='button'>
+    <form action="/Document Compare/Compare_result">
+      <input type=submit value='&laquo; Back'>
+    </form>
+</div>
+
+{% endblock %}

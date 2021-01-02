@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Analytic Home Page</title>
+{% endblock %}
+
+{% block body %}
+
+<br><br><br><br>
+
+<div class="form"></div>  
+    <h2 style="text-align: center">Document Comparison</h2>
+    <form action="/Document Compare/Compare_result" method="POST"> 
+
+    <input type="submit" value="Submit for Comparison">  
+    <br><br>
+        Document 1:
+        <textarea class="form-control" name="content1" id="exampleFormControlTextarea1" placeholder="Please enter your document #1 here." rows="6",  aria-label="SXXh"></textarea>
+        <br>
+        Document 2:
+        <textarea class="form-control" name="content2" id="exampleFormControlTextarea1" placeholder="Please enter your document #2 here." rows="6" aria-label="SXXh"></textarea>
+        <br>
+
+        <input type="submit" value="Submit for Comparison">  
+
+    </form>
+
+</div>
+
+
+{% endblock %}
