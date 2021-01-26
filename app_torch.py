@@ -3,8 +3,8 @@ import tensorflow as tf
  
 import transformers as trans
 import torch
-from transformers import DistilBertTokenizer, BertConfig
-from transformers import AdamW, DistilBertForSequenceClassification, Trainer, TrainingArguments
+from transformers import AlbertTokenizer, BertConfig
+from transformers import AdamW, AlbertForSequenceClassification, Trainer, TrainingArguments
 import torch.nn as nn
 import json
 from flask import Flask, render_template, request
@@ -19,9 +19,9 @@ import numpy as np
 app = Flask(__name__)
 
 # Preparing the Classifier
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased', do_lower_case=True)
-model_load = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
-model_load.load_state_dict(torch.load('torch_weights', map_location='cpu'))
+tokenizer = AlbertTokenizer.from_pretrained('albert-base-v1', do_lower_case=True)
+model_load = AlbertForSequenceClassification.from_pretrained("albert-base-v1", num_labels=2)
+model_load.load_state_dict(torch.load('Albert_trained', map_location='cpu'))
 def classify(Message):
     label = {0: 'Ham', 1: 'Spam'}
     X= tokenizer(Message, max_length=200, padding=True, truncation=True, return_tensors="pt") 
@@ -73,16 +73,17 @@ from nltk.corpus import stopwords
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from sklearn.metrics.pairwise import cosine_similarity
-sbert_model = SentenceTransformer('distilbert-base-nli-stsb-mean-tokens')
+sbert_model = SentenceTransformer('bert-base-nli-mean-tokens')
 def document_prep(doc1, doc2):
     documents_df=pd.DataFrame([doc1, doc2], columns=['documents'])
     stop_words_l=stopwords.words('english')
+    doc_list2=documents_df.documents
     doc_list=documents_df.documents.apply(lambda x: " ".join(re.sub(r'[^a-zA-Z]',' ',w).lower() for w in x.split() if re.sub(r'[^a-zA-Z]',' ',w).lower() not in stop_words_l) )
     return doc_list
 
-def sentiment_similarity(doc_list):
+def sentiment_similarity(doc_list2):
     
-    document_embeddings = sbert_model.encode(doc_list)
+    document_embeddings = sbert_model.encode(doc_list2)
     sentiment_similarities=cosine_similarity(document_embeddings)[0][1]
     return sentiment_similarities
 
